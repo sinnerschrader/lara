@@ -1,12 +1,13 @@
 import React from 'react'
 import { Redirect, Route, RouteProps, Switch } from 'react-router-dom'
 
-import { Admin, Trainee, Trainer, UserTypeEnum } from './graphql'
+import { Admin, Trainee, Trainer, Mentor, UserTypeEnum } from './graphql'
 import { useAuthentication } from './hooks/use-authentication'
 import strings from './locales/localization'
 import { AdminEditUserPage } from './pages/admin-edit-user-page'
 import { AdminTraineesPage } from './pages/admin-trainees-page'
 import { AdminTrainerPage } from './pages/admin-trainer-page'
+import { AdminMentorPage } from './pages/admin-mentor-page'
 import { AlexaPage } from './pages/alexa-page'
 import ArchivePage from './pages/archive-page'
 import DashboardPage from './pages/dashboard-page'
@@ -21,14 +22,20 @@ import ReportPage from './pages/report-page'
 import ReportReviewPage from './pages/report-review-page'
 import SettingsPage from './pages/settings-page'
 import SupportPage from './pages/support-page'
+import { TrainerPaperPage } from './pages/trainer-paper-page'
 import TraineePage from './pages/trainee-page'
 import TrainerReportsPage from './pages/trainer-reports-page'
+import { PaperCreateBriefingPage } from './pages/paper-create-briefing-page'
+import { PaperBriefingPage } from './pages/paper-briefing-page'
+import { TraineePaperPage } from './pages/trainee-paper-page'
+import { MentorPaperPage } from './pages/mentor-paper-page'
 
 type RoutesProps = {
   currentUser?:
     | Pick<Trainee, 'language' | 'type' | 'course' | '__typename'>
     | (Pick<Trainer, 'type' | 'language' | '__typename'> & { trainees: Pick<Trainee, 'id'>[] })
     | Pick<Admin, 'type' | 'language' | '__typename'>
+    | Pick<Mentor, 'type' | 'language' | '__typename'>
 }
 
 const Routes: React.FunctionComponent<RoutesProps> = ({ currentUser }) => {
@@ -47,6 +54,8 @@ const Routes: React.FunctionComponent<RoutesProps> = ({ currentUser }) => {
       // eslint-disable-next-line no-underscore-dangle
       if (currentUser.type === UserTypeEnum.Trainee && currentUser.__typename === 'Trainee') {
         // Routes for trainees
+
+        routes.push({ path: '/paper', exact: true, component: TraineePaperPage })
 
         if (currentUser.course) {
           // Trainee is ready to go
@@ -68,9 +77,18 @@ const Routes: React.FunctionComponent<RoutesProps> = ({ currentUser }) => {
         // Routes for trainers
         routes.push({ path: '/', exact: true, render: () => <Redirect to={redirectRoute} /> })
 
+        routes.push({ path: '/paper', exact: true, component: TrainerPaperPage })
+        routes.push({ path: '/paper/createBriefing', exact: true, component: PaperCreateBriefingPage })
+        routes.push({ path: '/paper/briefing/:paperId', exact: true, component: PaperBriefingPage })
+
         routes.push({ path: '/reports/:trainee?', exact: true, component: TrainerReportsPage })
         routes.push({ path: '/reports/:trainee/:year/:week', component: ReportReviewPage })
         routes.push({ path: '/trainees/:trainee?', component: TraineePage })
+      }
+
+      if (currentUser.type === UserTypeEnum.Mentor && currentUser.__typename === 'Mentor') {
+        // Routes for Mentor
+        routes.push({ path: '/paper', exact: true, component: MentorPaperPage })
       }
 
       if (currentUser.type === UserTypeEnum.Admin && currentUser.__typename === 'Admin') {
@@ -80,6 +98,9 @@ const Routes: React.FunctionComponent<RoutesProps> = ({ currentUser }) => {
 
         routes.push({ path: '/trainer', exact: true, component: AdminTrainerPage })
         routes.push({ path: '/trainer/:id', component: AdminEditUserPage })
+
+        routes.push({ path: '/mentor', exact: true, component: AdminMentorPage })
+        routes.push({ path: '/mentor/:id', component: AdminEditUserPage })
 
         routes.push({ path: '/trainees', exact: true, component: AdminTraineesPage })
         routes.push({ path: '/trainees/:id', component: AdminEditUserPage })

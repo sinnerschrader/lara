@@ -13,7 +13,7 @@ export const StyledPrintDay = styled.div`
   }
 `
 
-export const StyledPrintDayHeadline = styled.h2`
+export const StyledPrintHeadline = styled.h2`
   margin: 0 0 ${Spacings.m};
   font-size: ${FontSizes.h2};
   color: ${(props) => props.theme.darkFont};
@@ -28,6 +28,14 @@ export const StyledPrintDayHeader = styled.div`
 export const StyledPrintDaySubHeadline = styled.h3`
   font-size: ${FontSizes.smallCopy};
   margin: 0;
+  color: ${(props) => props.theme.darkFont};
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+`
+
+export const StyledPrintPaperSubHeadline = styled.h3`
+  font-size: ${FontSizes.copy};
+  margin-bottom: ${Spacings.m};
   color: ${(props) => props.theme.darkFont};
   text-transform: uppercase;
   letter-spacing: 1.2px;
